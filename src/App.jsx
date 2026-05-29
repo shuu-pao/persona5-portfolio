@@ -6,28 +6,33 @@ import Projects from "./components/Projects";
 import Skills from "./components/Skills";
 import Contact from "./components/Contact";
 import menuBg from "./assets/menu-bg.jpeg";
+import trainTransition from "./assets/train-transition.mov";
 
 function App() {
   const [activeMenu, setActiveMenu] = useState("menu");
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.5); // default 50%
+  const [volume, setVolume] = useState(0.5);
+  const [targetSection, setTargetSection] = useState(null);
+  const [showTarget, setShowTarget] = useState(false);
 
-  const audioRef = useRef(null);       // background music
-  const selectSoundRef = useRef(null); // button sound effect
+  const audioRef = useRef(null); // background music
 
   const handleMenuClick = (menu) => {
-    // Play select sound
-    if (selectSoundRef.current) {
-      selectSoundRef.current.currentTime = 0; // restart from beginning
-      selectSoundRef.current.play();
-    }
+    // Play click sound
+    const sound = new Audio("/select-button.mp3");
+    sound.volume = 1.0;
+    sound.play();
 
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveMenu(menu);
-      setIsTransitioning(false);
-    }, 800);
+    setTargetSection(menu);
+    setActiveMenu("transition");
+    setShowTarget(false);
+  };
+
+  // Hover sound
+  const handleHover = () => {
+    const sound = new Audio("/select-button.mp3");
+    sound.volume = 0.6;
+    sound.play();
   };
 
   useEffect(() => {
@@ -40,7 +45,6 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Sync mute/volume with audio element
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
@@ -49,12 +53,9 @@ function App() {
   }, [isMuted, volume]);
 
   return (
-    <div className={`app ${isTransitioning ? "transition" : ""}`}>
+    <div className="app">
       {/* Background music */}
       <audio ref={audioRef} src="/bg-music.mp3" autoPlay loop />
-
-      {/* Button select sound */}
-      <audio ref={selectSoundRef} src="/select-button.mp3" />
 
       {/* Audio controls */}
       <div className="audio-controls">
@@ -76,12 +77,45 @@ function App() {
           className="menu"
           style={{ backgroundImage: `url(${menuBg})` }}
         >
-          <button onClick={() => handleMenuClick("about")}>About Me</button>
-          <button onClick={() => handleMenuClick("experience")}>Experience</button>
-          <button onClick={() => handleMenuClick("projects")}>Projects</button>
-          <button onClick={() => handleMenuClick("skills")}>Skills</button>
-          <button onClick={() => handleMenuClick("contact")}>Contact</button>
+          <button onClick={() => handleMenuClick("about")} onMouseEnter={handleHover}>About Me</button>
+          <button onClick={() => handleMenuClick("experience")} onMouseEnter={handleHover}>Experience</button>
+          <button onClick={() => handleMenuClick("projects")} onMouseEnter={handleHover}>Projects</button>
+          <button onClick={() => handleMenuClick("skills")} onMouseEnter={handleHover}>Skills</button>
+          <button onClick={() => handleMenuClick("contact")} onMouseEnter={handleHover}>Contact</button>
         </nav>
+      )}
+
+      {activeMenu === "transition" && (
+        <div className="transition-container">
+          {/* Background underneath video */}
+          <div className="transition-background">
+            {!showTarget ? (
+              <div className="menu-bg" style={{ backgroundImage: `url(${menuBg})` }} />
+            ) : (
+              <div className="section-bg">
+                {targetSection === "about" && <About />}
+                {targetSection === "experience" && <Experience />}
+                {targetSection === "projects" && <Projects />}
+                {targetSection === "skills" && <Skills />}
+                {targetSection === "contact" && <Contact />}
+              </div>
+            )}
+          </div>
+
+          {/* Transition video overlay */}
+          <video
+            src={trainTransition}
+            autoPlay
+            muted
+            playsInline
+            className="transition-video"
+            onLoadedMetadata={(e) => {
+              const half = e.target.duration / 2;
+              setTimeout(() => setShowTarget(true), half * 1000);
+            }}
+            onEnded={() => setActiveMenu(targetSection)}
+          />
+        </div>
       )}
 
       {activeMenu === "about" && <About />}

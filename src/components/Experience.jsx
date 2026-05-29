@@ -4,7 +4,9 @@ function Experience() {
   return (
     <main className="section" style={{ backgroundImage: `url(${expBg})` }}>
       <h1>Experience</h1>
-      <p>Internship in Salesforce workflow design and Agentforce process architecture.</p>
+      <ul>
+        <li>Accenture — Intern (Jan 2026 - Apr 2026)</li>
+      </ul>
       <p>Press ESC to return to the menu.</p>
     </main>
   );

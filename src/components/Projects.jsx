@@ -4,7 +4,11 @@ function Projects() {
   return (
     <main className="section" style={{ backgroundImage: `url(${projectsBg})` }}>
       <h1>Projects</h1>
-      <p>Persona 5 portfolio, Salesforce workflow builder, gaming PC optimization.</p>
+      <ul>
+        <li>Smartbin3 (Thesis)</li>
+        <li>PIC-Based Futsal Scoreboard</li>
+        <li>Persona5-Themed Portfolio</li>
+      </ul>
       <p>Press ESC to return to the menu.</p>
     </main>
   );

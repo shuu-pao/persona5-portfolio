@@ -4,7 +4,7 @@ function About() {
   return (
     <main className="section" style={{ backgroundImage: `url(${aboutBg})` }}>
       <h1>About Me</h1>
-      <p>Computer Engineering student, graduating July 2026. Passionate about React, Firebase, and gaming performance optimization.</p>
+      <p>Computer Engineering graduate</p>
       <p>Press ESC to return to the menu.</p>
     </main>
   );

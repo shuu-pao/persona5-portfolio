@@ -59,16 +59,10 @@ button:hover {
   padding: 40px;
   color: white;
 
-  /* Background settings */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  /* Removed dark overlay */
-  /* background-color: rgba(0, 0, 0, 0.6);
-  background-blend-mode: darken; */
-
-  /* Center content */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,26 +80,37 @@ button:hover {
   text-decoration: underline;
 }
 
-/* Transition overlay */
-.app.transition::before {
-  content: "";
+/* Transition container */
+.transition-container {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: repeating-linear-gradient(
-    -45deg,
-    red,
-    red 20px,
-    black 20px,
-    black 40px
-  );
-  animation: wipe 0.8s forwards;
+  width: 100vw;
+  height: 100vh;
   z-index: 999;
 }
 
-@keyframes wipe {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(0); }
+.transition-background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.menu-bg, .section-bg {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Transition video overlay */
+.transition-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
 }
 
 /* Audio controls bottom-left */
