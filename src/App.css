@@ -1,4 +1,3 @@
-/* Reset default margins/padding */
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -6,7 +5,6 @@ html, body, #root {
   width: 100%;
 }
 
-/* Full screen app container */
 .app {
   font-family: "Arial Black", sans-serif;
   background: black;
@@ -19,11 +17,20 @@ html, body, #root {
   justify-content: center;
 }
 
-/* Menu buttons centered vertically */
+/* Main menu styling */
 .menu {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-height: 100vh;
+  width: 100vw;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  align-items: center;
+  justify-content: center;
 }
 
 button {
@@ -42,10 +49,41 @@ button:hover {
   color: black;
 }
 
-/* Section content */
+/* Section styling */
 .section {
   text-align: center;
   font-size: 28px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 40px;
+  color: white;
+
+  /* Background settings */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Removed dark overlay */
+  /* background-color: rgba(0, 0, 0, 0.6);
+  background-blend-mode: darken; */
+
+  /* Center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.section a {
+  color: red;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.section a:hover {
+  color: white;
+  text-decoration: underline;
 }
 
 /* Transition overlay */
@@ -68,4 +106,35 @@ button:hover {
 @keyframes wipe {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(0); }
+}
+
+/* Audio controls bottom-left */
+.audio-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.audio-controls button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.audio-controls button:hover {
+  background: white;
+  color: black;
+}
+
+.audio-controls input[type="range"] {
+  width: 100px;
 }
