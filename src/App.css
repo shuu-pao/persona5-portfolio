@@ -1,89 +1,153 @@
-html, body, #root {
+/* App.css — Final update
+   - Removes hover "smog" (white halo) by disabling .p5-glow on hover
+   - Keeps a subtle glow for active (selected) rows only
+   - Keeps previous fixes for background fill, focus, selection, and mobile tap highlight
+*/
+
+/* ===== Global interaction / flash prevention (place first) ===== */
+
+/* Remove text selection highlight on click/drag */
+::selection {
+  background: transparent;
+  color: inherit;
+}
+
+/* Disable mobile tap highlight and touch callout globally */
+*,
+a,
+button,
+.p5-row,
+.p5-row * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Remove inner focus border in Firefox */
+button::-moz-focus-inner,
+a::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Force no background, outline or shadow on active/focus/hover states for interactive elements */
+a,
+a:active,
+a:focus,
+button,
+button:active,
+button:focus,
+.p5-row,
+.p5-row:active,
+.p5-row:focus,
+.p5-row *:active,
+.p5-row *:focus {
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Neutralize system focus color */
+:focus {
+  outline-color: transparent !important;
+  outline-style: none !important;
+}
+
+/* Prevent selection highlight on elements inside rows */
+.p5-row, .p5-row * {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Keep accessible focus visible only for keyboard users (your existing pattern) */
+body:not(.user-is-tabbing) .p5-row:focus,
+body:not(.user-is-tabbing) button:focus,
+body:not(.user-is-tabbing) a:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* When user is tabbing, show a subtle accessible focus ring */
+.user-is-tabbing .p5-row:focus,
+.user-is-tabbing button:focus,
+.user-is-tabbing a:focus {
+  outline: 3px solid rgba(13,13,13,0.6);
+  outline-offset: 6px;
+  box-shadow: none;
+}
+
+/* ===== Reset ===== */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== Base app layout ===== */
+html, body, #root {
   height: 100%;
   width: 100%;
-}
-
-.app {
-  font-family: "Arial Black", sans-serif;
-  background: black;
-  color: white;
-  min-height: 100vh;
-  width: 100vw;
+  font-family: 'Persona5Main', "Arial Black", sans-serif;
+  background: var(--p5-black, #0d0d0d);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--p5-white, #fff);
 }
 
-/* Main menu styling */
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Ensure root fills viewport and has no implicit padding/width constraints */
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  display: block;
+}
+
+/* App container */
+.app {
   min-height: 100vh;
   width: 100vw;
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  align-items: center;
-  justify-content: center;
-}
-
-button {
-  background: red;
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  font-weight: bold;
-  cursor: pointer;
-  transform: skew(-10deg);
-  font-size: 20px;
-}
-
-button:hover {
-  background: white;
-  color: black;
-}
-
-/* Section styling */
-.section {
-  text-align: center;
-  font-size: 28px;
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 40px;
-  color: white;
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.section a {
-  color: red;
-  text-decoration: none;
-  font-weight: bold;
+/* ===== Background helpers ===== */
+.site-bg-image,
+.site-bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.section a:hover {
-  color: white;
-  text-decoration: underline;
+.site-bg-image {
+  object-fit: contain;
+  object-position: center center;
 }
 
-/* Transition container */
+.site-bg-video {
+  object-fit: cover;
+}
+
+.site-content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Transition / train video overlay ===== */
 .transition-container {
   position: fixed;
-  top: 0; left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: 999;
@@ -91,55 +155,417 @@ button:hover {
 
 .transition-background {
   position: absolute;
-  top: 0; left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.menu-bg, .section-bg {
+/* menu-bg and section-bg: ensure full-bleed background */
+.menu-bg,
+.section-bg {
   width: 100%;
   height: 100%;
-  background-size: cover;
+  background-size: cover;        /* full-bleed */
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* avoid fixed zoom artifacts on some browsers */
 }
 
-/* Transition video overlay */
+/* If a background-image is applied inline on the overlay, make it cover the viewport */
+.p5-overlay {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Transition video */
 .transition-video {
   position: absolute;
-  top: 0; left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   pointer-events: none;
 }
 
-/* Audio controls bottom-left */
+/* ===== Audio controls (BGM panel style) ===== */
 .audio-controls {
   position: fixed;
-  bottom: 20px;
   left: 20px;
+  bottom: 20px;
+  z-index: 120;
   display: flex;
   align-items: center;
+  gap: 0;
+  background: rgba(13,13,13,0.82);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 10px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  backdrop-filter: blur(2px);
+  transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.audio-controls:hover,
+.audio-controls:focus-within {
   gap: 10px;
-  background: rgba(0,0,0,0.6);
-  padding: 8px 12px;
-  border-radius: 8px;
 }
 
 .audio-controls button {
-  background: red;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  font-weight: bold;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(13,13,13,0.86);
+  color: #fff;
+  padding: 8px 10px;
+  min-width: 84px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .audio-controls button:hover {
-  background: white;
-  color: black;
+  transform: translateY(-1px);
+}
+
+.audio-controls button.on {
+  background: var(--p5-red, #d92323);
+  color: #fff;
 }
 
 .audio-controls input[type="range"] {
   width: 100px;
+  accent-color: var(--p5-red, #d92323);
+  cursor: pointer;
+}
+
+/* -------------------------
+   Persona 5 Menu (P5Menu)
+   ------------------------- */
+
+/* Overlay wrapper that holds the menu and decorative elements */
+.p5-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Right edge stripes */
+.p5-stripe {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: #ffffff;
+  z-index: 30;
+  pointer-events: none;
+  animation: stripe-shimmer 2200ms linear infinite;
+}
+
+.p5-stripe2 {
+  position: absolute;
+  right: 9px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255,255,255,0.22);
+  z-index: 30;
+  pointer-events: none;
+  animation: stripe-shimmer 2200ms linear infinite;
+  animation-delay: 1100ms;
+}
+
+@keyframes stripe-shimmer {
+  0%   { opacity: 0.78; transform: translateY(0); }
+  50%  { opacity: 1; transform: translateY(2px); }
+  100% { opacity: 0.78; transform: translateY(0); }
+}
+
+/* Menu container */
+.p5-menu {
+  position: relative;
+  z-index: 25;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  pointer-events: all;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Each row (link) */
+.p5-row {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 380ms ease, transform 380ms cubic-bezier(0.22,1,0.36,1);
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  width: 100%;
+  justify-content: center;
+}
+
+/* When mounted, rows slide in (stagger controlled inline via transitionDelay) */
+.p5-row.mounted {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+
+/* Glow behind label
+   NOTE: reduced and disabled on hover to remove the "smog" halo.
+   Active rows still show a subtle glow for keyboard/selected state. */
+.p5-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 200%;
+  /* much lower intensity than before to avoid heavy white halo */
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.06) 0%, transparent 55%);
+  filter: blur(10px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0; /* default hidden */
+  transition: opacity 220ms ease, filter 220ms ease;
+}
+
+/* Disable glow on hover entirely (removes smog-like white line) */
+.p5-row:hover .p5-glow {
+  opacity: 0 !important;
+  filter: blur(0) !important;
+  transition: none !important;
+}
+
+/* Keep a subtle glow only for active (selected) rows */
+.p5-row.active .p5-glow {
+  opacity: 0.55;
+  filter: blur(14px);
+  transition: opacity 260ms ease, filter 260ms ease;
+}
+
+/* Skew wrapper to apply per-item skew transforms */
+.p5-skew-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+
+/* Decorative white triangular underlay that "pops" on active
+   Slightly reduce opacity so it doesn't read as a harsh white edge */
+.p5-shadow-tri {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform-origin: left center;
+  background: rgba(255,255,255,0.78); /* slightly less than 0.85 */
+  z-index: 1;
+  pointer-events: none;
+  transform: translateY(-40%) translateX(-12px) scaleX(0);
+  transition: transform 180ms ease;
+}
+
+/* Pop animation */
+.p5-shadow-tri.pop {
+  animation: p5-shadow-pop 280ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes p5-shadow-pop {
+  0%   { transform: translateY(-40%) translateX(-12px) scaleX(0); }
+  55%  { transform: translateY(-46%) translateX(-15px) scaleX(1.22); }
+  75%  { transform: translateY(-39%) translateX(-11px) scaleX(0.96); }
+  100% { transform: translateY(-40%) translateX(-12px) scaleX(1); }
+}
+
+/* Highlight bar that animates across the label when active */
+.p5-highlight {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform-origin: left center;
+  background: #0dd9ff;
+  z-index: 2;
+  pointer-events: none;
+  transition: transform 220ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* Wiggle clip-path animation for the highlight when active */
+.p5-row.active .p5-highlight {
+  animation: p5-wiggle-poly 660ms ease-in-out infinite;
+}
+
+@keyframes p5-wiggle-poly {
+  0%   { clip-path: polygon(0% 56%, 16% 0%, 76% 7%, 100% 24%, 94% 100%, 8% 88%); }
+  25%  { clip-path: polygon(0% 62%, 12% 6%, 84% 0%, 100% 34%, 88% 100%, 2% 94%); }
+  50%  { clip-path: polygon(0% 40%, 28% 10%, 72% 0%, 100% 44%, 98% 92%, 14% 100%); }
+  75%  { clip-path: polygon(0% 52%, 22% 0%, 80% 12%, 100% 28%, 90% 100%, 6% 82%); }
+  100% { clip-path: polygon(0% 56%, 16% 0%, 76% 7%, 100% 24%, 94% 100%, 8% 88%); }
+}
+
+/* Label wrapper and base styles */
+.p5-label-wrap {
+  position: relative;
+  z-index: 3;
+  display: block;
+  white-space: nowrap;
+}
+
+/* Base label style (stroke + fill) */
+.p5-label-base {
+  font-family: 'Persona5Main';
+  font-style: italic;
+  letter-spacing: 0.6px;
+  line-height: 0.85;
+  display: block;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-text-stroke: 18.2px rgba(0,0,0,0.8);
+  paint-order: stroke fill;
+}
+
+/* Dark (default) label */
+.p5-label-dark {
+  color: #f6f3f3;
+  transition: color 120ms ease;
+}
+
+/* Bright overlay label that appears when active */
+.p5-label-bright {
+  color: #1a1a1a;
+  -webkit-text-stroke: 18.2px rgba(255,255,255,0.9);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+/* When active, show bright label */
+.p5-row.active .p5-label-bright {
+  opacity: 1;
+}
+
+/* Hover behavior for dark label */
+.p5-row:hover:not(.active) .p5-label-dark {
+  color: #ffffff;
+}
+
+/* Glow wiggle keyframes (used only for active rows now) */
+@keyframes glow-wiggle {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  50%  { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+}
+
+/* Entry stagger helpers (rows will use inline transition-delay) */
+.p5-row:nth-child(1) { }
+.p5-row:nth-child(2) { }
+.p5-row:nth-child(3) { }
+.p5-row:nth-child(4) { }
+.p5-row:nth-child(5) { }
+
+/* Footer hints (keyboard) */
+.p5-hint {
+  position: absolute;
+  bottom: 24px;
+  right: 28px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  font-family: 'Persona5Main';
+  opacity: 0;
+  transition: opacity 500ms ease 900ms;
+  pointer-events: none;
+}
+
+.p5-hint.mounted {
+  opacity: 1;
+}
+
+.p5-hint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.28);
+}
+
+.p5-hint-key {
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+/* Optional large name tag in the corner (keeps reference project's look) */
+.p5-name-tag {
+  position: absolute;
+  top: 18px;
+  left: 40px;
+  z-index: 40;
+  font-family: 'Persona5Main';
+  font-style: italic;
+  font-size: 65px;
+  line-height: 0.88;
+  letter-spacing: 2px;
+  color: #ffffff;
+  transform: rotate(18deg);
+  transform-origin: left top;
+  user-select: none;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Section fallback styling (if you render sections directly) */
+.section {
+  text-align: center;
+  font-size: 32px;
+  width: 100vw;
+  height: 100vh;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .p5-name-tag { display: none; }
+  .p5-label-base { -webkit-text-stroke: 10px rgba(0,0,0,0.8); }
+  .p5-label-bright { -webkit-text-stroke: 10px rgba(255,255,255,0.9); }
+  .p5-menu { padding: 28px; gap: 18px; }
+  .p5-row { transform: translateX(18px); }
+}
+
+/* Accessibility: focus outline for keyboard users */
+.p5-row:focus,
+.p5-row a:focus {
+  outline: 3px solid rgba(13,13,13,0.6);
+  outline-offset: 6px;
 }
